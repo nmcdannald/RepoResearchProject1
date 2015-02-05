@@ -1,0 +1,48 @@
+---
+title: "PA1_template"
+author: "Nicholas McDannald"
+date: "Wednesday, February 04, 2015"
+output: html_document
+---
+This document is built to satisfy the requirements of the Reproducible Research Course Peer Assessment 1 by Johns Hopkins Bloomberg School of Public Health via CourseRa. Go to [Reproducible Research Page](https://class.coursera.org/repdata-011/human_grading/view/courses/973512/assessments/3/submissions) for more information.
+
+## Download the data
+The following code download the zip file from [here](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip) and unzips the file to the working directory. First it checks to see if the zip file exists. If so downloading and unzip process is skipped. This process requires the downloader package.
+
+```{r}
+if(!file.exists("pa1.zip")) {
+        library(downloader)
+        url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+        download(url,dest="pa1.zip") 
+        unzip ("pa1.zip")
+}
+```
+
+## Loading and Preprocessing the data
+Read in the data into R then convert the date field to a data type of date
+
+```{r}
+actdf <- read.csv('activity.csv', header = TRUE)
+actdf$date <- as.Date(actdf$date)
+```
+
+## What is mean total number of steps taken per day?
+1. Calculate the total number of steps taken per day
+```{r}
+stepsdf <- aggregate(steps~date, actdf ,sum)
+```
+
+2. Make a histogram of the total number of steps taken each day
+```{r}
+hist(stepsdf$steps,xlab="Total Number of Steps",
+     col="red",main = "Total Steps Each Day")
+``` 
+
+3. Calculate and report the mean and median of the total number of steps taken per day
+```{r}
+meansteps <- mean(stepsdf$steps)
+medsteps <- median(stepsdf$steps)
+```
+
+- Mean number of steps: **`r format(meansteps)`** 
+- Median number of steps: **`r format(medsteps)`**
