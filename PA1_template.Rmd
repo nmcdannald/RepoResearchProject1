@@ -78,14 +78,27 @@ length(which(is.na(actdf)))
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-Here I'm going to utilize the zoo package to help me with filling NAs with 
-an approximate number determined by the function in zoo based on before and 
-after values.  If the zoo package is not already installed, you will need to do so now.
-```{r}
-library(zoo)
-actfillna <- zoo(actdf[,], order.by = actdf&date)
+Here I'm going to utilize the optmatch package to help me with filling NAs with 
+the default algorithm the package uses.  This default is set by all.covs = TRUE.
+Note that I can set this argument to false and set my own calculation. And if time
+permits I would like to play around with this package in the future to see if
+I can make a better imputation, which the author of the packages encourages.
+More information about this package and the Fill.NA function can be found [here](http://www.inside-r.org/packages/cran/optmatch/docs/fill.NAs)
 
+ If the optmatch package can be installed at CRAN.
  
+ 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+ 
+```{r}
+library(optmatch)
+actdf_fill <- fill.NAs(actdf, data=NULL,all.covs = TRUE, contrasts.arg=NULL)
+actdf_fill$steps.NA <- NULL # remove NA TRUE/FALSE Column created by the function.
 ```
 
+4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
+Not too much of a shape difference but the size of a couple of bars increased in size. 
+```{r}
+stepsdf_fill <- aggregate(steps~date, actdf_fill ,sum)
+hist(stepsdf_fill$steps,xlab="Total Number of Steps",
+     col="red",main = "Total Steps Each Day")
